@@ -1,0 +1,67 @@
+# File: .github/workflows/android-ci.yml
+name: Android CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew build
+
+    - name: Run tests
+      run: ./gradlew test
+
+    - name: Run instrumented tests
+      run: |
+        emulator -avd test -no-window -no-audio &
+        android-wait-for-emulator
+        ./gradlew connectedCheck
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-build
+        path: app/build/outputs/
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Run lint
+      run: ./gradlew lint
+
+    - name: Upload lint results
+      uses: actions/upload-artifact@v3
+      with:
+        name: lint-results
+        path: app/build/reports/
