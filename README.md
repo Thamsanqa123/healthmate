@@ -26,9 +26,9 @@ youtube video link:  https://youtube.com/shorts/g8tQWkWmfjo
 **New Features Added Since Prototype:**
 
 #### Enhanced Authentication
-Google Single Sign-On (SSO) - Users can now sign in with their Google accounts
-Enhanced password encryption 
-Secure token management with Firebase Authentication
+-Google Single Sign-On (SSO) - Users can now sign in with their Google accounts
+-Enhanced password encryption 
+-Secure token management with Firebase Authentication
 
 #### Advanced Connectivity
 - NoSQL Database Integration - Firestore for scalable data storage
@@ -58,7 +58,7 @@ Secure token management with Firebase Authentication
 - **Input validation** - Robust validation for all user inputs
 - **Security enhancements** - Data encryption and secure API communication
 
-## 📲 Google Play Store Preparation
+## Google Play Store Preparation
 
 ### App Assets Ready for Publication:
 
