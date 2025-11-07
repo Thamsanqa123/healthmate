@@ -7,7 +7,7 @@
 HealthMate is a comprehensive mobile health and fitness tracking application designed specifically for South African users. The app helps users track their meals, workouts, and overall health progress with a user-friendly interface and innovative features.
 
 ## Demonstration Video
-youtube video link:  https://youtube.com/shorts/g8tQWkWmfjo
+youtube video link:  [https://youtube.com/shorts/g8tQWkWmfjo](https://youtube.com/shorts/ftHbhnfRRHk)
 
 **Video Features Demonstrated:**
 - User registration and login with encrypted passwords
