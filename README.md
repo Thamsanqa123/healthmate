@@ -2,11 +2,11 @@
 # HealthMate - Mobile Health & Fitness Tracker
 ## github link: https://github.com/Thamsanqa123/healthmate 
 
-## 📱 App Overview
+## App Overview
 
 HealthMate is a comprehensive mobile health and fitness tracking application designed specifically for South African users. The app helps users track their meals, workouts, and overall health progress with a user-friendly interface and innovative features.
 
-## 🎥 Demonstration Video
+## Demonstration Video
 youtube video link:  https://youtube.com/shorts/g8tQWkWmfjo
 
 **Video Features Demonstrated:**
