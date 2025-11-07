@@ -1,16 +1,15 @@
 package com.example.healthmate
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.healthmate.databinding.FragmentWorkoutsBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import java.text.SimpleDateFormat
 import java.util.*
 
 class WorkoutsFragment : Fragment() {
@@ -18,6 +17,8 @@ class WorkoutsFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: SharedViewModel
     private lateinit var workoutsAdapter: WorkoutsAdapter
+    private lateinit var language: String
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,9 +33,14 @@ class WorkoutsFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
 
+        // Get language from SharedPreferences
+        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        language = prefs.getString("language", "en") ?: "en"
+
         setupRecyclerView()
         setupClickListeners()
         observeData()
+        applyTranslations()
     }
 
     private fun setupRecyclerView() {
@@ -60,51 +66,65 @@ class WorkoutsFragment : Fragment() {
         }
     }
 
+    private fun applyTranslations() {
+        // Empty state translations
+        binding.tvEmptyTitle.text =
+            if (language == "zulu") "Azikho Iziqeqesho" else "No Workouts Yet"
+        binding.tvEmptySubtitle.text =
+            if (language == "zulu") "Thepha inkinobho + ukuze ungeze ukuziqeqesha kwakho kokuqala"
+            else "Tap the + button to add your first workout"
+    }
+
     private fun showAddWorkoutDialog() {
-        val workoutTypes = arrayOf("Running", "Cycling", "Weight Training", "Yoga", "Swimming", "Walking")
+        val workoutTypes = arrayOf(
+            if (language == "zulu") "Ukugijima" else "Running",
+            if (language == "zulu") "Ukuhamba ngebhayisikili" else "Cycling",
+            if (language == "zulu") "Ukuzivocavoca ngeweyithi" else "Weight Training",
+            if (language == "zulu") "Yoga" else "Yoga",
+            if (language == "zulu") "Ukubhukuda" else "Swimming",
+            if (language == "zulu") "Ukuhamba" else "Walking"
+        )
         var selectedType = workoutTypes[0]
 
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Add Workout")
-            .setSingleChoiceItems(workoutTypes, 0) { dialog, which ->
+            .setTitle(if (language == "zulu") "Engeza Ukuziqeqesha" else "Add Workout")
+            .setSingleChoiceItems(workoutTypes, 0) { _, which ->
                 selectedType = workoutTypes[which]
             }
-            .setPositiveButton("Add") { dialog, which ->
+            .setPositiveButton(if (language == "zulu") "Engeza" else "Add") { _, _ ->
                 val workout = Workout(
                     workoutId = UUID.randomUUID().toString(),
-                    userId = "current_user", // In real app, get from logged in user
+                    userId = "current_user",
                     workoutType = selectedType,
-                    duration = 30, // Default duration
+                    duration = 30,
                     caloriesBurned = when (selectedType) {
-                        "Running" -> 300
-                        "Cycling" -> 250
-                        "Weight Training" -> 200
-                        "Yoga" -> 150
-                        "Swimming" -> 350
-                        "Walking" -> 180
+                        workoutTypes[0] -> 300
+                        workoutTypes[1] -> 250
+                        workoutTypes[2] -> 200
+                        workoutTypes[3] -> 150
+                        workoutTypes[4] -> 350
+                        workoutTypes[5] -> 180
                         else -> 200
                     },
-                    distance = if (selectedType == "Running" || selectedType == "Cycling") 5.0f else null,
+                    distance = if (selectedType == workoutTypes[0] || selectedType == workoutTypes[1]) 5.0f else null,
                     date = Date()
                 )
                 viewModel.addWorkout(workout)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(if (language == "zulu") "Khansela" else "Cancel", null)
             .show()
     }
 
     private fun showDeleteWorkoutDialog(workout: Workout) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Delete Workout")
-            .setMessage("Are you sure you want to delete this workout?")
-            .setPositiveButton("Delete") { dialog, which ->
-                // Remove workout from list
+            .setTitle(if (language == "zulu") "Susa Ukuziqeqesha" else "Delete Workout")
+            .setMessage(if (language == "zulu") "Uqinisekile ukuthi ufuna ukususa lokhu kuziqeqesha?" else "Are you sure you want to delete this workout?")
+            .setPositiveButton(if (language == "zulu") "Susa" else "Delete") { _, _ ->
                 val currentWorkouts = viewModel.workouts.value?.toMutableList() ?: mutableListOf()
                 currentWorkouts.remove(workout)
-                // Update the flow (in real app, delete from database)
-                // For now, we'll just update the local list
+                // Update the list (real app should remove from DB)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(if (language == "zulu") "Khansela" else "Cancel", null)
             .show()
     }
 

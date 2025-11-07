@@ -1,5 +1,6 @@
 package com.example.healthmate
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,16 +8,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.healthmate.R
-import com.example.healthmate.SharedViewModel
 import com.example.healthmate.databinding.FragmentDashboardBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
 class DashboardFragment : Fragment() {
+
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: SharedViewModel
+    private var language = "english"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,6 +29,8 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        language = prefs.getString("language", "english") ?: "english"
 
         viewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
 
@@ -36,63 +39,47 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.tvDate.text = SimpleDateFormat("EEEE, MMMM d", Locale.getDefault()).format(Date())
+        val locale = if (language == "zulu") Locale("zu") else Locale.getDefault()
+        val sdf = SimpleDateFormat("EEEE, MMMM d", locale)
+        binding.tvDate.text = sdf.format(Date())
 
-        // Make workout card navigate to workouts fragment
-        binding.cardWorkout.setOnClickListener {
-            findNavController().navigate(R.id.workoutsFragment)
-        }
+        binding.cardWorkout.setOnClickListener { findNavController().navigate(R.id.workoutsFragment) }
+        binding.cardMeals.setOnClickListener { findNavController().navigate(R.id.mealsFragment) }
+        binding.tvWorkoutsCount.setOnClickListener { findNavController().navigate(R.id.workoutsFragment) }
+        binding.tvMealsCount.setOnClickListener { findNavController().navigate(R.id.mealsFragment) }
 
-        // Make meals card navigate to meals fragment
-        binding.cardMeals.setOnClickListener {
-            findNavController().navigate(R.id.mealsFragment)
-        }
+        binding.tvWelcome.text = if (language == "zulu") "Siyakwamukela, " else "Welcome, "
+        binding.tvWelcome.append(viewModel.currentUser.value?.fullName ?: "")
 
-        // Make stats cards clickable too
-        binding.tvWorkoutsCount.setOnClickListener {
-            findNavController().navigate(R.id.workoutsFragment)
-        }
-
-        binding.tvMealsCount.setOnClickListener {
-            findNavController().navigate(R.id.mealsFragment)
-        }
+        binding.tvWorkoutsLabel.text = if (language == "zulu") "Ukuziqeqesha" else "Workouts"
+        binding.tvMealsLabel.text = if (language == "zulu") "Izidlo" else "Meals"
+        binding.tvQuickActions.text = if (language == "zulu") "Izinyathelo Ezisheshayo" else "Quick Actions"
+        binding.tvCaloriesSummary.text = if (language == "zulu") "Ukudla Kwamakhalori" else "Calories Summary"
+        binding.tvConsumed.text = if (language == "zulu") "Kudliwe" else "Consumed"
+        binding.tvBurned.text = if (language == "zulu") "Kushisiwe" else "Burned"
+        binding.tvLogWorkout.text = if (language == "zulu") "Bhalisela Ukuzivocavoca" else "Log Workout"
+        binding.tvTrackExercise.text = if (language == "zulu") "Landela Ukuzivocavoca Kwakho" else "Track Your Exercise"
+        binding.tvLogMeal.text = if (language == "zulu") "Bhalisela Isidlo" else "Log Meal"
+        binding.tvTrackNutrition.text = if (language == "zulu") "Landela Ukudla Kwakho" else "Track Your Nutrition"
     }
 
     private fun observeData() {
-        // Observe current user
         viewModel.currentUser.observe(viewLifecycleOwner) { user ->
-            user?.let { currentUser ->
-                binding.tvWelcome.text = "Welcome, ${currentUser.fullName}"
+            user?.let {
+                binding.tvWelcome.text = if (language == "zulu") "Siyakwamukela, ${it.fullName}" else "Welcome, ${it.fullName}"
             }
         }
 
-        // Observe workouts
         viewModel.workouts.observe(viewLifecycleOwner) { workouts ->
             binding.tvWorkoutsCount.text = workouts.size.toString()
             val totalCalories = workouts.sumOf { it.caloriesBurned }
             binding.tvCaloriesBurned.text = totalCalories.toString()
-
-            // Calculate weekly progress
-            val weeklyWorkouts = workouts.filter {
-                Date().time - it.date.time <= 7 * 24 * 60 * 60 * 1000
-            }
-            // Remove tvWeeklyWorkouts reference if it doesn't exist
-            // binding.tvWeeklyWorkouts.text = "${weeklyWorkouts.size}/7 workouts this week"
         }
 
-        // Observe meals
         viewModel.meals.observe(viewLifecycleOwner) { meals ->
             binding.tvMealsCount.text = meals.size.toString()
             val totalCalories = meals.sumOf { it.calories }
             binding.tvCaloriesConsumed.text = totalCalories.toString()
-
-            // Calculate today's meals
-            val todayMeals = meals.filter {
-                SimpleDateFormat("yyyyMMdd").format(it.date) ==
-                        SimpleDateFormat("yyyyMMdd").format(Date())
-            }
-            // Remove tvTodayMeals reference if it doesn't exist
-            // binding.tvTodayMeals.text = "${todayMeals.size} meals today"
         }
     }
 

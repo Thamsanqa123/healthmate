@@ -31,6 +31,7 @@
         android:visibility="gone">
 
         <ImageView
+            android:id="@+id/ivEmptyMeal"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:src="@drawable/ic_meal"
@@ -38,6 +39,7 @@
             app:tint="@color/gray" />
 
         <TextView
+            android:id="@+id/tvEmptyTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -47,6 +49,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tvEmptySubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

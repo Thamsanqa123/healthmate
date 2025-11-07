@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#fff">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -14,8 +15,45 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/app_name" />
+            android:background="@color/white"
+            app:titleTextColor="@color/black">
 
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="20sp"
+
+                android:layout_gravity="start"
+                android:gravity="center" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_gravity="end|center_vertical"
+                android:paddingEnd="8dp">
+
+                <ImageView
+                    android:id="@+id/iv_sync"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:src="@drawable/sync"
+                    android:contentDescription="Sync" />
+
+                <ImageView
+                    android:id="@+id/iv_settings"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:src="@drawable/settings"
+                    android:contentDescription="Settings" />
+            </LinearLayout>
+
+        </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView

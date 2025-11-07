@@ -1,5 +1,6 @@
 package com.example.healthmate
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -17,6 +18,8 @@ class MealsFragment : Fragment() {
     private lateinit var viewModel: SharedViewModel
     private lateinit var mealsAdapter: MealsAdapter
 
+    private lateinit var language: String
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -28,11 +31,16 @@ class MealsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Get language from SharedPreferences
+        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        language = prefs.getString("language", "en") ?: "en"
+
         viewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
 
         setupRecyclerView()
         setupClickListeners()
         observeData()
+        applyTranslations()
     }
 
     private fun setupRecyclerView() {
@@ -58,68 +66,81 @@ class MealsFragment : Fragment() {
         }
     }
 
+    private fun applyTranslations() {
+        // Empty state translations
+        binding.tvEmptyTitle.text =
+            if (language == "zulu") "Azikho Izidlo" else "No Meals Yet"
+        binding.tvEmptySubtitle.text =
+            if (language == "zulu") "Thepha inkinobho + ukuze ungeze isidlo sakho sokuqala"
+            else "Tap the + button to add your first meal"
+    }
+
     private fun showAddMealDialog() {
-        val mealTypes = arrayOf("Breakfast", "Lunch", "Dinner", "Snack")
+        val mealTypes = arrayOf(
+            if (language == "zulu") "Isidlo sakuseni" else "Breakfast",
+            if (language == "zulu") "Isidlo sasemini" else "Lunch",
+            if (language == "zulu") "Isidlo sakusihlwa" else "Dinner",
+            if (language == "zulu") "Isidlo esincane" else "Snack"
+        )
         var selectedType = mealTypes[0]
 
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Add Meal")
-            .setSingleChoiceItems(mealTypes, 0) { dialog, which ->
+            .setTitle(if (language == "zulu") "Engeza Isidlo" else "Add Meal")
+            .setSingleChoiceItems(mealTypes, 0) { _, which ->
                 selectedType = mealTypes[which]
             }
-            .setPositiveButton("Add") { dialog, which ->
+            .setPositiveButton(if (language == "zulu") "Engeza" else "Add") { _, _ ->
                 val meal = Meal(
                     mealId = UUID.randomUUID().toString(),
-                    userId = "current_user", // In real app, get from logged in user
+                    userId = "current_user",
                     mealType = selectedType,
-                    foodItems = "Sample food items", // In real app, get from user input
+                    foodItems = "Sample food items",
                     calories = when (selectedType) {
-                        "Breakfast" -> 400
-                        "Lunch" -> 600
-                        "Dinner" -> 700
-                        "Snack" -> 200
+                        mealTypes[0] -> 400
+                        mealTypes[1] -> 600
+                        mealTypes[2] -> 700
+                        mealTypes[3] -> 200
                         else -> 500
                     },
                     carbs = when (selectedType) {
-                        "Breakfast" -> 50f
-                        "Lunch" -> 70f
-                        "Dinner" -> 60f
-                        "Snack" -> 25f
+                        mealTypes[0] -> 50f
+                        mealTypes[1] -> 70f
+                        mealTypes[2] -> 60f
+                        mealTypes[3] -> 25f
                         else -> 50f
                     },
                     protein = when (selectedType) {
-                        "Breakfast" -> 20f
-                        "Lunch" -> 30f
-                        "Dinner" -> 35f
-                        "Snack" -> 10f
+                        mealTypes[0] -> 20f
+                        mealTypes[1] -> 30f
+                        mealTypes[2] -> 35f
+                        mealTypes[3] -> 10f
                         else -> 25f
                     },
                     fat = when (selectedType) {
-                        "Breakfast" -> 15f
-                        "Lunch" -> 20f
-                        "Dinner" -> 25f
-                        "Snack" -> 8f
+                        mealTypes[0] -> 15f
+                        mealTypes[1] -> 20f
+                        mealTypes[2] -> 25f
+                        mealTypes[3] -> 8f
                         else -> 15f
                     },
                     date = Date()
                 )
                 viewModel.addMeal(meal)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(if (language == "zulu") "Khansela" else "Cancel", null)
             .show()
     }
 
     private fun showDeleteMealDialog(meal: Meal) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Delete Meal")
-            .setMessage("Are you sure you want to delete this meal?")
-            .setPositiveButton("Delete") { dialog, which ->
-                // Remove meal from list
+            .setTitle(if (language == "zulu") "Susa Isidlo" else "Delete Meal")
+            .setMessage(if (language == "zulu") "Uqinisekile ukuthi ufuna ukususa lesi sidlo?" else "Are you sure you want to delete this meal?")
+            .setPositiveButton(if (language == "zulu") "Susa" else "Delete") { _, _ ->
                 val currentMeals = viewModel.meals.value?.toMutableList() ?: mutableListOf()
                 currentMeals.remove(meal)
-                // Update the flow (in real app, delete from database)
+                // Update the flow (real app should remove from DB)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(if (language == "zulu") "Khansela" else "Cancel", null)
             .show()
     }
 
