@@ -18,7 +18,7 @@ youtube video link:  https://youtube.com/shorts/g8tQWkWmfjo
 - Real-time push notifications
 - Multilingual support (English & isiZulu)
 - Settings management
-- Data storage in Firestore NoSQL database
+
 
 ## Release Notes
 
@@ -58,27 +58,8 @@ youtube video link:  https://youtube.com/shorts/g8tQWkWmfjo
 - **Input validation** - Robust validation for all user inputs
 - **Security enhancements** - Data encryption and secure API communication
 
-## Google Play Store Preparation
 
-### App Assets Ready for Publication:
 
-#### Screenshots
-- [ ] Phone screenshots (EN) - All main screens
-- [ ] Phone screenshots (ZU) - All main screens in isiZulu
-- [ ] Feature graphics - App store listing images
-
-#### Store Listing
-- [ ] App title: HealthMate - Fitness & Nutrition Tracker
-- [ ] Short description: Your personal health companion for South African lifestyle
-- [ ] Full description: Complete feature list and benefits
-- [ ] App icon: Professional 512x512 PNG
-- [ ] Feature graphic: 1024x500 PNG
-
-#### Technical Requirements
-- [ ] Signed APK generated
-- [ ] Target SDK 34
-- [ ] Privacy policy implemented
-- [ ] Content rating completed
 
 ## AI Usage 
 
